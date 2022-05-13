@@ -1,0 +1,85 @@
+-- Create table Queries
+create table Artist (Artist_id numeric primary key, Name varchar(255), Address varchar(255), Email varchar(255), DOB date, Age numeric);
+create table Instrument (Owner_id numeric, Company varchar(255), Instrument_type varchar(255), foreign key(Owner_id) references Artist(Artist_id));
+create table Songs (Song_id numeric primary key, Name varchar(255), Genre varchar(255) unique, Language varchar(255) default 'English', Artist_id numeric, 
+                   foreign key(Artist_id) references Artist(Artist_id));
+create table Login (Username varchar(255) primary key, Password varchar(255));   
+create table Users (User_id numeric primary key, Username varchar(255), Music_taste varchar(255), Email varchar(255), Age numeric check (Age>15), foreign key(Music_taste) 
+                   references Songs(Genre), foreign key(Username) references Login(Username));
+
+-- Insert Into Table Queries
+-- Artist Table
+insert into Artist values(1001,'Atharv Patil','Surat, Gujarat','atrpatil@gmail.com,athwalines@surat.in','2001-01-18',21);
+alter session set NLS_DATE_FORMAT='YYYY-MM-DD';
+insert into Artist values(1002,'Krishna Shreeram','Raipur, Chattisgarh','shreeram1@gmail.com,krish@gmail.in','2002-07-25',19);
+insert into Artist values(1003,'Umar Shariff','Bangalore, Karnataka','umarsh@gmail.com','2002-03-23',20);
+insert into Artist values(1004,'Aayush Dude','Pune, Maharashtra','dude73@gmail.com,Aaxyush@gmail.in','2003-11-20',18);
+insert into Artist values(1005,'Vraj Rajpura','Bhavnagar, Gujarat','vnr@gmail.com,rajpura@bvn.in','2004-01-08',18);
+insert into Artist values(1006,'Shilp Kishor','Ahmedabad, Gujarat','shilpii123@gmail.com,kishor@yahoo.co.in','1998-07-07',23); 
+
+
+
+create view 
+-- Instrument Table
+insert into instrument values(1001,'Gibson','brass');
+insert into instrument values(1002,'Yamaha','strings');
+insert into instrument values(1006,'Shure','woodwind');
+insert into instrument values(1003,'Sennheiser','percussion');
+insert into instrument values(1005,'Gibson','strings');
+insert into instrument values(1004,'Roland','keyboards');       
+
+-- Songs Table
+insert into songs values(123001,'Subah Hone Na De','Pop','Hindi',1001);
+insert into songs values(123002,'100 varas no','Rap','Gujarati',1003);
+insert into songs values(123003,'Zingaat','RnB','marathi',1002);
+insert into songs (Song_id,name,genre,Artist_id) values(123004,'Fly me to the moon','Jazz',1004);
+insert into songs (Song_id,name,genre,Artist_id) values(123005,'Flumes','EDM',1006);
+insert into songs (Song_id,name,genre,Artist_id) values(123006,'Fight the power','Hip-Hop',1005);
+
+-- Login Table
+insert into login values('atharvp18','Atharv.patil1801');
+insert into login values('kshreeram25','Krishna@2507');
+insert into login values('umar.shariff','Shariffumar23');
+insert into login values('aayush.dude','DudeAayush20');
+insert into login values('vraj.rajpura','Rajpura08Vraj');
+insert into login values('shilpkishor','Shilpikishor');
+
+-- Users Table
+insert into users values(9001,'shilpkishor','EDM','shilpii123@gmail.com',23);
+insert into users values(9002,'umar.shariff','Rap','umarsh@gmail.com',20);
+insert into users values(9003,'kshreeram25','RnB','shreeram1@gmail.com',19);
+insert into users values(9004,'aayush.dude','Jazz','dude73@gmail.com',18);
+insert into users values(9005,'atharvp18','Pop','atrpatil@gmail.com',21);
+insert into users values(9006,'vraj.rajpura','Hip-Hop','vnr@gmail.com',18);
+
+-- Sample Questions and their Queries
+-- Q1 : Find the artist with max songs for a user.
+insert into songs (Song_id,name,genre,Artist_id) values(123007,'Bad habits','Blues',1004);
+Select Artist_id, count(Artist_id) from songs group by Artist_id;
+Select Artist_id from songs where max(count(Artist_id)) from songs group by Artist_id;
+select n.name,count(*) as 'No_of_Songs' from songs s inner join artist n on n.artist_id = s.artist_id group by n.artist_id order by count(*) desc limit 1;
+
+--Q2 : Display users who have the maximum similar tastes
+insert into login values('kavya.parekh02','Kavyaparekh123');
+insert into users values(9007,'kavya.parekh02','Pop','kavyaparekh02@gmail.com',20);
+insert into login values('peri.ani','anirud_peri');
+insert into users values(9008,'peri.ani','EDM','anirudh@gmail.com',20);
+insert into login values('Freys','freya_parekh');
+insert into users values(9009,'Freys','EDM','fap20@gmail.com',20);
+
+
+Select * from users where Music_taste in (Select Music_taste from users group by music_taste having count(*)>1) order by Music_taste;
+
+--Q: Find the artist who plays percussion instruments
+Select * from Artist where Artist_id=(Select owner_id from instrument where instrument_type='percussion');
+
+--Q: Find out artist name and songs of artists whose age is between 18-20 years
+Select artist_name,song_name from(select * from artist inner join songs on artist.Artist_id=songs.Artist_id)where age between 18 and 20;
+    
+--Q: Display user_id and their corresponding passwords from login table
+Select user_id, password from users,login where users.username=login.username;
+
+
+
+
+                   
